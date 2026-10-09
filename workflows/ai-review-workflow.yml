@@ -1,0 +1,54 @@
+# mettre ce fichier dans les github actions du repository pour lequel on veut avoir les revues de code
+name: AI Code Review
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  ai-review:
+    runs-on: # s'assurer d'avoir les mêmes tags ici et sur le runner, sinon il ne va pas rouler (possible de les modifier et d'en avoir moins, tant que c'est la même chose des deux côtés)
+      - self-hosted
+      - windows
+      - x64
+      - ai-review
+
+    steps:
+
+      # ----------------------------------------
+      # 1. Checkout le repository
+      # ----------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ----------------------------------------
+      # 2. Rouler le processus de revue avec python
+      # ----------------------------------------
+
+      - name: Run AI reviewer
+        shell: powershell
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          OLLAMA_MODEL: qwen2.5-coder:7b # preciser le modele a utilser
+          OLLAMA_NUM_CTX: 8192 # taille de la fenetre de contexte en tokens
+
+        # s'assurer de mettre le chemin où le projet de revue de code a été cloné sur votre machine
+        run: |
+          & "C:\projects\ai_code_review\.venv\Scripts\python.exe" `
+            "C:\projects\ai_code_review\pull_request_review.py"
+
+            

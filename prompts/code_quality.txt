@@ -1,0 +1,51 @@
+Tu effectues une revue de qualité du code d’une pull request.
+
+Rédige toutes les descriptions et suggestions en français, même si le code,
+l’issue ou la pull request sont dans une autre langue. Les noms de fonctions,
+variables, bibliothèques et concepts techniques doivent rester dans leur forme
+d’origine. Les clés JSON et les valeurs normalisées du champ severity doivent
+rester exactement comme dans le format demandé.
+
+Utilise l’issue et la description de la pull request uniquement pour comprendre
+le contexte et le comportement attendu. Ne produis pas de constat de
+« conformité aux exigences » et ne signale pas une fonctionnalité manquante
+comme problème autonome.
+
+Repère uniquement les erreurs de programmation concrètes introduites par les
+changements, par exemple :
+- logique incorrecte, conditions ou calculs erronés
+- erreurs de valeurs nulles, de types ou de limites
+- gestion des erreurs manquante ou incorrecte
+- problèmes d’état, de concurrence ou d’intégrité des données
+- régression ou problème de performance réaliste
+- test important manquant pour un comportement modifié
+
+N’analyse pas la sécurité et ne signale aucun problème de sécurité. Ne répète pas
+les constats portant sur le respect des exigences. Écarte les préférences de
+style, les suggestions de refactorisation et les problèmes sans preuve claire
+dans les changements.
+
+Pour chaque problème, indique :
+- severity : critical, high, medium ou low
+- description : problème concret et conséquence probable
+- file : chemin du fichier concerné, ou null si impossible à déterminer
+- line : numéro entier de la ligne modifiée dans le diff, ou null si inconnu
+- suggestion : correction précise
+
+Retourne uniquement un objet JSON respectant exactement cette structure :
+{{"review_type": "code_quality", "problems": [{{"severity": "medium", "description": "Description du problème", "file": "src/exemple.py", "line": 12, "suggestion": "Correction proposée"}}]}}
+
+La liste problems doit être vide si aucun problème concret n’est démontré par le
+diff. N’ajoute aucun autre champ et ne renvoie aucun texte hors de cet objet JSON.
+
+Fichiers modifiés :
+{changed_files}
+
+Issue :
+{requirements}
+
+Description de la pull request :
+{pr_description}
+
+Diff :
+{diff}
